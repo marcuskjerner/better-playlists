@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-let defaultTextColor = '#fafafa';
+// Variables
 let defaultStyle = {
-  color: defaultTextColor
+  color: '#fafafa'
 }
 
+
+// Aggregate Component
 class Aggregate extends Component {
   render() {
     return (
@@ -17,6 +18,8 @@ class Aggregate extends Component {
   }
 };
 
+
+// Filter Component
 class Filter extends Component {
   render() {
     return (
@@ -28,6 +31,8 @@ class Filter extends Component {
   }
 }
 
+
+// Playlist Component
 class Playlist extends Component {
   render() {
     return (
@@ -44,11 +49,12 @@ class Playlist extends Component {
   }
 }
 
+// MAIN APP
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>Title</h1>
+        <h1 className="title">Title</h1>
         <Aggregate />
         <Aggregate />
         <Filter />
