@@ -6,18 +6,52 @@ let defaultStyle = {
   color: '#fafafa'
 }
 
+let fakeServerData = {
+  user: {
+    name: 'Marcus',
+    playlists: [
+      {
+        name: 'My Favorites',
+        songs: ['Beat It', 'Cammeloni Makaroni', 'Rosa Helikopter']
+      },
+      {
+        name: 'Discover Weekly',
+        songs: ['Le Song', 'The Kalsong Song', 'Heroes', 'One']
+      },
+      {
+        name: 'Kids Today',
+        songs: ['Ich bin Schnappi', 'Here comes Pippe Longstocking', 'Donald Ducker']
+      },
+      {
+        name: 'My Best Songs',
+        songs: ['Wunderbaum', '99 Luftballong', 'Scharzwald', 'Kartoffeln']
+      }
+    ]
+  } 
+}
 
-// Aggregate Component
-class Aggregate extends Component {
+// PlaylistCounter Component
+class PlaylistCounter extends Component {
   render() {
     return (
       <div style={{...defaultStyle, width: '40%', display: 'inline-block'}}>
-        <h2>Number Text</h2>
+        <h2>{this.props.playlists && this.props.playlists.length} Text</h2>
       </div>
     );
   }
 };
 
+
+// HoursCounter Component
+class HoursCounter extends Component {
+  render() {
+    return (
+      <div style={{...defaultStyle, width: '40%', display: 'inline-block'}}>
+        <h2>{this.props.playlists && this.props.playlists.length} Text</h2>
+      </div>
+    );
+  }
+};
 
 // Filter Component
 class Filter extends Component {
@@ -51,16 +85,35 @@ class Playlist extends Component {
 
 // MAIN APP
 class App extends Component {
+  
+  constructor() {
+    super();
+    this.state = {serverData: {}};
+  }
+
+  componentDidMount() {
+    // Fake Server Response Time
+    setTimeout(() => {
+      this.setState({serverData: fakeServerData});
+    }, 150);
+    
+  }
   render() {
     return (
       <div className="App">
-        <h1 className="title">Title</h1>
-        <Aggregate />
-        <Aggregate />
-        <Filter />
-        <Playlist />
-        <Playlist />
-        <Playlist />
+        {this.state.serverData.user ?
+          <div> 
+            <h1 className="title">
+            {this.state.serverData.user.name}'s Playlist
+          </h1>
+          <PlaylistCounter playlists={this.state.serverData.user.playlists}/>
+          <HoursCounter />
+          <Filter />
+          <Playlist />
+          <Playlist />
+          <Playlist /> 
+        </div> : <h2 style={defaultStyle}>Loading ...</h2>
+        }
       </div>
     );
   }
