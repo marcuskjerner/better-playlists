@@ -12,11 +12,19 @@ let fakeServerData = {
     playlists: [
       {
         name: 'My Favorites',
-        songs: ['Beat It', 'Cammeloni Makaroni', 'Rosa Helikopter']
+        songs: [
+            {name: 'Beat It', duration: 346},
+            {name: 'Cammeloni Makaroni', duration: 221},
+            {name: 'Rosa Helikopter', duration: 303}
+          ]
       },
       {
         name: 'Discover Weekly',
-        songs: ['Le Song', 'The Kalsong Song', 'Heroes', 'One']
+        songs: [{name: 'Le Song', duration: 286}, 
+        {name: 'The Kalsong Song', duration: 286}, 
+        {name: 'Heroes', duration: 286}, 
+        {name: 'One', duration: 286}]
+
       },
       {
         name: 'Kids Today',
@@ -35,7 +43,7 @@ class PlaylistCounter extends Component {
   render() {
     return (
       <div style={{...defaultStyle, width: '40%', display: 'inline-block'}}>
-        <h2>{this.props.playlists && this.props.playlists.length} Text</h2>
+        <h2>{this.props.playlists && this.props.playlists.length} Playlists</h2>
       </div>
     );
   }
@@ -47,7 +55,7 @@ class HoursCounter extends Component {
   render() {
     return (
       <div style={{...defaultStyle, width: '40%', display: 'inline-block'}}>
-        <h2>{this.props.playlists && this.props.playlists.length} Text</h2>
+        <h2>{this.props.playlists && this.props.playlists.length} Hours</h2>
       </div>
     );
   }
@@ -107,7 +115,7 @@ class App extends Component {
             {this.state.serverData.user.name}'s Playlist
           </h1>
           <PlaylistCounter playlists={this.state.serverData.user.playlists}/>
-          <HoursCounter />
+          <HoursCounter playlists={this.state.serverData.user.playlists}/>
           <Filter />
           <Playlist />
           <Playlist />
