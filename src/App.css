@@ -18,3 +18,8 @@ html, body {
 .Aggregate {
   text-align: center;
 }
+
+.playlist ul {
+  list-style: none;
+  text-align: left;
+}

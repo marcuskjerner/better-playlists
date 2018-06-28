@@ -21,9 +21,9 @@ let fakeServerData = {
       {
         name: 'Discover Weekly',
         songs: [
-          { name: 'Le Song', duration: 286 },
+          { name: 'Le Song', duration: 183 },
           { name: 'The Kalsong Song', duration: 286 },
-          { name: 'Heroes', duration: 286 },
+          { name: 'Heroes', duration: 186 },
           { name: 'One', duration: 286 }]
       },
       {
@@ -31,6 +31,14 @@ let fakeServerData = {
         songs: [{ name: 'Ich bin Schnappi', duration: 189 },
         { name: 'Here comes Pippi Longstocking', duration: 189 },
         { name: 'Donald Ducker', duration: 189 }
+        ]
+      },
+      {
+        name: 'Amazing Times',
+        songs: [{ name: 'Streets of Philadelphia', duration: 219 },
+        { name: 'Fields of Gold', duration: 210 },
+        { name: 'One', duration: 139 },
+        { name: 'Romeo & Juliet', duration: 184 }
         ]
       }
     ]
@@ -84,14 +92,15 @@ class Filter extends Component {
 // Playlist Component
 class Playlist extends Component {
   render() {
+    let playlist = this.props.playlist;
     return (
-      <div style={{ ...defaultStyle, width: "25%", display: "inline-block" }}>
+      <div className="playlist" style={{ ...defaultStyle, width: "25%", display: "inline-block" }}>
         <img alt="" />
-        <h3>Playlist Name</h3>
+        <h3>{playlist.name}</h3>
         <ul>
-          <li>Song 1</li>
-          <li>Song 2</li>
-          <li>Song 3</li>
+          {playlist.songs.map(song =>
+            <li> {song.name} </li>
+          )}
         </ul>
       </div>
     );
@@ -124,9 +133,9 @@ class App extends Component {
             <PlaylistCounter playlists={this.state.serverData.user.playlists} />
             <HoursCounter playlists={this.state.serverData.user.playlists} />
             <Filter />
-            <Playlist />
-            <Playlist />
-            <Playlist />
+            {this.state.serverData.user.playlists.map(playlist =>
+              <Playlist playlist={playlist} />
+            )}
           </div> : <h2 style={defaultStyle}>Loading ...</h2>
         }
       </div>
