@@ -75,8 +75,8 @@ class Playlist extends Component {
   render() {
     let playlist = this.props.playlist;
     return (
-      <div className="playlist" style={{ ...defaultStyle, width: "25%", display: "inline-block" }}>
-        <img src={playlist.imageUrl} style={{ 'width': '50%', 'border-radius': '50%' }} alt="" />
+      <div className="playlist" style={{ ...defaultStyle }}>
+        <img src={playlist.imageUrl} style={{ 'border-radius': '50%' }} alt="" />
         <h3>{playlist.name}</h3>
         <ul>
           {playlist.songs.map(song =>
@@ -166,7 +166,14 @@ class App extends Component {
                 )
             }
 
-          </div> : <div className='btn' style={{ 'margin': '25% 0' }} onClick={() => window.location = 'http://localhost:8888/login'}>Sign in with Spotify</div>
+          </div> : <div className='btn' style={{ 'margin': '25% 0' }}
+            onClick={() => {
+              window.location = window.location.includes('localhost')
+                ? ('https://localhost:8888/login')
+                : ('https://playlistme.herokuapp.com/login')
+
+            }
+            }>Sign in with Spotify</div>
 
         }
       </div>

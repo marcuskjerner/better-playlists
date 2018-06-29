@@ -19,9 +19,27 @@ html, body {
   text-align: center;
 }
 
+/* Playlists */
+.playlist {
+  
+  margin-top: 5%;
+  display: inline-block;
+  width: 25%;
+  
+}
+
 .playlist ul {
   list-style: none;
   text-align: left;
+}
+.playlist li {
+  position: absolute;
+  bottom: -10px;
+}
+
+.playlist img {
+  display: inline-block;
+  max-width: 50%;
 }
 
 /* Loading Bars */
