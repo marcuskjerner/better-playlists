@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import queryString from 'query-string';
 import './App.css';
 
 // Variables
@@ -6,44 +7,21 @@ let defaultStyle = {
   color: '#fafafa'
 }
 
-let fakeServerData = {
-  user: {
-    name: 'Marcus',
-    playlists: [
-      {
-        name: 'My Favorites',
-        songs: [
-          { name: 'Beat It', duration: 346 },
-          { name: 'Cammeloni Makaroni', duration: 221 },
-          { name: 'Rosa Helikopter', duration: 303 }
-        ]
-      },
-      {
-        name: 'Discover Weekly',
-        songs: [
-          { name: 'Le Song', duration: 183 },
-          { name: 'The Kalsong Song', duration: 286 },
-          { name: 'Heroes', duration: 186 },
-          { name: 'One', duration: 286 }]
-      },
-      {
-        name: 'Kids Today',
-        songs: [{ name: 'Ich bin Schnappi', duration: 189 },
-        { name: 'Here comes Pippi Longstocking', duration: 189 },
-        { name: 'Donald Ducker', duration: 189 }
-        ]
-      },
-      {
-        name: 'Amazing Times',
-        songs: [{ name: 'Streets of Philadelphia', duration: 219 },
-        { name: 'Fields of Gold', duration: 210 },
-        { name: 'One', duration: 139 },
-        { name: 'Romeo & Juliet', duration: 184 }
-        ]
-      }
-    ]
-  }
-}
+// let fakeServerData = {
+//   user: {
+//     name: 'Marcus',
+//     playlists: [
+//       {
+//         name: 'My Favorites',
+//         songs: [
+//           { name: 'Beat It', duration: 346 },
+//           { name: 'Cammeloni Makaroni', duration: 221 },
+//           { name: 'Rosa Helikopter', duration: 303 }
+//         ]
+//       }
+//     ]
+//   }
+// }
 
 // PlaylistCounter Component
 class PlaylistCounter extends Component {
@@ -98,7 +76,7 @@ class Playlist extends Component {
     let playlist = this.props.playlist;
     return (
       <div className="playlist" style={{ ...defaultStyle, width: "25%", display: "inline-block" }}>
-        <img alt="" />
+        <img src={playlist.imageUrl} style={{ 'width': '50%', 'border-radius': '50%' }} alt="" />
         <h3>{playlist.name}</h3>
         <ul>
           {playlist.songs.map(song =>
@@ -122,25 +100,57 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // Fake Server Response Time
-    setTimeout(() => {
-      this.setState({ serverData: fakeServerData });
-    }, 1000);
+    const parsed = queryString.parse(window.location.search);
+    const accessToken = parsed.access_token;
+    // const url = 'https://api.spotify.com/v1/me';
+
+    // Fetch User Data
+    fetch('https://api.spotify.com/v1/me', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    })
+      .then(response => response.json())
+      .then(data => this.setState({
+        user: {
+          name: data.display_name
+        }
+      }))
+      .catch(err => console.log('ERROR: ' + err))
+
+    // Fetch Playlist Data
+    fetch('https://api.spotify.com/v1/me/playlists', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    })
+      .then(response => response.json())
+      .then(data => this.setState({
+        playlists: data.items.map(item => {
+          console.log(data.items)
+          return {
+            name: item.name,
+            imageUrl: item.images[0].url,
+            songs: []
+          }
+        })
+      })
+      )
+      .catch(err => console.log('ERROR: ' + err))
 
   }
+
   render() {
-    let playlistToRender = this.state.serverData.user ? this.state.serverData.user.playlists
-      .filter(playlist =>
-        playlist.name.toLowerCase()
-          .includes(this.state.filterString.toLowerCase())
-      ) : [];
+    let playlistToRender =
+      this.state.user &&
+        this.state.playlists
+        ? this.state.playlists.filter(playlist =>
+          playlist.name.toLowerCase().includes(
+            this.state.filterString.toLowerCase()))
+        : []
     return (
-      <div className="App">
-        {this.state.serverData.user ?
+      <div className="App" >
+        {this.state.user ?
           <div>
             <h1 className="title">
-              {this.state.serverData.user.name}'s Playlist
-          </h1>
+              {this.state.user.name}'s Playlists
+              </h1>
             <PlaylistCounter playlists={playlistToRender} />
 
             <HoursCounter playlists={playlistToRender} />
@@ -154,7 +164,8 @@ class App extends Component {
                 )
             }
 
-          </div> : <div class="loadingBars" style={{ ...defaultStyle, margin: "25% 0" }}><div></div><div></div><div></div></div>
+          </div> : <div className='btn' style={{ 'margin': '25% 0' }} onClick={() => window.location = 'http://localhost:8888/login'}>Sign in with Spotify</div>
+
         }
       </div>
     );
