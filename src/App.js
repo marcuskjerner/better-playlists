@@ -102,7 +102,9 @@ class App extends Component {
   componentDidMount() {
     const parsed = queryString.parse(window.location.search);
     const accessToken = parsed.access_token;
-    // const url = 'https://api.spotify.com/v1/me';
+
+    if (!accessToken)
+      return;
 
     // Fetch User Data
     fetch('https://api.spotify.com/v1/me', {
