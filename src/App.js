@@ -82,7 +82,10 @@ class Filter extends Component {
     return (
       <div style={{ defaultStyle }}>
         <img alt="" />
-        <input type="text" />
+        <input type="text" onKeyUp={event => {
+          this.props.onTextChange(event.target.value)
+        }}
+        />
       </div>
     );
   }
@@ -122,10 +125,6 @@ class App extends Component {
     // Fake Server Response Time
     setTimeout(() => {
       this.setState({ serverData: fakeServerData });
-    }, 150);
-    // Fake Filter String input
-    setTimeout(() => {
-      this.setState({ filterString: 'kids' })
     }, 1000);
 
   }
@@ -141,7 +140,7 @@ class App extends Component {
 
             <HoursCounter playlists={this.state.serverData.user.playlists} />
 
-            <Filter />
+            <Filter onTextChange={text => this.setState({ filterString: text })} />
 
             {
               this.state.serverData.user.playlists
@@ -153,7 +152,7 @@ class App extends Component {
                 )
             }
 
-          </div> : <h2 style={defaultStyle}>Loading ...</h2>
+          </div> : <div class="loadingBars" style={{ ...defaultStyle, margin: "25% 0" }}><div></div><div></div><div></div></div>
         }
       </div>
     );
