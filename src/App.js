@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import queryString from 'query-string-es5';
 import './App.css';
 
+
 // Variables
 let defaultStyle = {
   color: '#fafafa'
@@ -12,7 +13,8 @@ class PlaylistCounter extends Component {
   render() {
     return (
       <div style={{ ...defaultStyle, width: '40%', display: 'inline-block' }}>
-        <h2>{this.props.playlists.length} Playlists</h2>
+        <h2 style={{ marginBottom: '-20px' }}>{this.props.playlists.length}</h2>
+        <h4>Playlists</h4>
       </div>
     );
   }
@@ -32,7 +34,8 @@ class HoursCounter extends Component {
     }, 0);
     return (
       <div style={{ ...defaultStyle, width: '40%', display: 'inline-block' }}>
-        <h2>{Math.round(totalDuration / 60)} Hours</h2>
+        <h2 style={{ marginBottom: '-20px' }}>{Math.round(totalDuration / 60)}</h2>
+        <h4>Hours</h4>
       </div>
     );
   }
@@ -44,7 +47,7 @@ class Filter extends Component {
     return (
       <div style={{ defaultStyle }}>
         <img alt="" />
-        <input type="text" onKeyUp={event => {
+        <input type="text" className="searchBar" placeholder="Name a Track or Playlist" onKeyUp={event => {
           this.props.onTextChange(event.target.value)
         }}
         />
@@ -56,16 +59,21 @@ class Filter extends Component {
 
 // Playlist Component
 class Playlist extends Component {
+
   render() {
     let playlist = this.props.playlist;
     return (
       <div className="playlist" style={{ ...defaultStyle }}>
         <img src={playlist.imageUrl} style={{ 'borderRadius': '50%' }} alt="" />
-        <h3>{playlist.name}</h3>
-        <ul>
+        <div style={{ fontSize: '1.2rem', fontWeight: '700', margin: '25px 0', marginLeft: '-20px' }}>{
+          playlist.name
+        }
+        </div>
+        <ul className="list">
           {playlist.songs.map(song =>
-            <li> {song.name} </li>
+            <li className="list-item"> {song.name} </li>
           )}
+
         </ul>
       </div>
     );
@@ -135,7 +143,9 @@ class App extends Component {
       .then(playlists => this.setState({
         playlists: playlists.map(item => {
           return {
-            name: item.name,
+            name: item.name.split('').length > 15
+              ? item.name.split('').splice(0, 17).join('') + '...'
+              : item.name,
             imageUrl: item.images[0].url,
             songs: item.trackDatas.slice(0, 3)
           }
@@ -156,27 +166,32 @@ class App extends Component {
           let matchesSong = playlist.songs.find(song => song.name.toLowerCase().includes(this.state.filterString.toLowerCase()))
           return matchesPlaylist || matchesSong
         }) : []
+
+
     return (
       <div className="App" >
         {
           this.state.user ?
             <div>
               <h1 className="title">
-                {this.state.user.name}'s Playlists
+
+                {this.state.user.name}
               </h1>
+              <h3 style={{ marginTop: '-20px' }}>Playlists</h3>
 
               <PlaylistCounter playlists={playlistToRender} />
 
               <HoursCounter playlists={playlistToRender} />
 
               <Filter onTextChange={text => this.setState({ filterString: text })} />
-
-              {
-                playlistToRender
-                  .map(playlist =>
-                    <Playlist playlist={playlist} />
-                  )
-              }
+              <div className="playlists">
+                {
+                  playlistToRender
+                    .map(playlist =>
+                      <Playlist playlist={playlist} />
+                    )
+                }
+              </div>
 
             </div> : <div className='btn' style={{ 'margin': '25% 0' }}
               onClick={() => {
