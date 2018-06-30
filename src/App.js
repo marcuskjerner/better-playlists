@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import queryString from 'query-string';
+import queryString from 'query-string-es5';
 import './App.css';
 
 // Variables
