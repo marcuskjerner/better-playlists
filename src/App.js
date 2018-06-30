@@ -97,7 +97,7 @@ class App extends Component {
       .then(response => response.json())
       .then(data => this.setState({
         user: {
-          name: data.display_name
+          name: data.id
         }
       }))
       .catch(err => console.log('ERROR: ' + err))
@@ -150,10 +150,12 @@ class App extends Component {
     let playlistToRender =
       this.state.user &&
         this.state.playlists
-        ? this.state.playlists.filter(playlist =>
-          playlist.name.toLowerCase().includes(
-            this.state.filterString.toLowerCase()))
-        : []
+        ? this.state.playlists.filter(playlist => {
+          let matchesPlaylist = playlist.name.toLowerCase().includes(
+            this.state.filterString.toLowerCase())
+          let matchesSong = playlist.songs.find(song => song.name.toLowerCase().includes(this.state.filterString.toLowerCase()))
+          return matchesPlaylist || matchesSong
+        }) : []
     return (
       <div className="App" >
         {
@@ -162,6 +164,7 @@ class App extends Component {
               <h1 className="title">
                 {this.state.user.name}'s Playlists
               </h1>
+
               <PlaylistCounter playlists={playlistToRender} />
 
               <HoursCounter playlists={playlistToRender} />
