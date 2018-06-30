@@ -60,7 +60,7 @@ class Playlist extends Component {
     let playlist = this.props.playlist;
     return (
       <div className="playlist" style={{ ...defaultStyle }}>
-        <img src={playlist.imageUrl} style={{ 'border-radius': '50%' }} alt="" />
+        <img src={playlist.imageUrl} style={{ 'borderRadius': '50%' }} alt="" />
         <h3>{playlist.name}</h3>
         <ul>
           {playlist.songs.map(song =>
@@ -107,13 +107,37 @@ class App extends Component {
       headers: { 'Authorization': 'Bearer ' + accessToken }
     })
       .then(response => response.json())
-      .then(data => this.setState({
-        playlists: data.items.map(item => {
-          console.log(data.items)
+      .then(playlistData => {
+        let playlists = playlistData.items
+        let trackDataPromises = playlists.map(playlist => {
+          let responsePromise = fetch(playlist.tracks.href, {
+            headers: { 'Authorization': 'Bearer ' + accessToken }
+          })
+          let trackDataPromise = responsePromise
+            .then(response => response.json())
+          return trackDataPromise
+        })
+        let allTracksDatasPromises =
+          Promise.all(trackDataPromises)
+        let playlistsPromise = allTracksDatasPromises.then(trackDatas => {
+          trackDatas.forEach((trackData, i) => {
+            playlists[i].trackDatas = trackData.items
+              .map(item => item.track)
+              .map(trackData => ({
+                name: trackData.name,
+                duration: trackData.duration_ms / 1000
+              }))
+          })
+          return playlists
+        })
+        return playlistsPromise
+      })
+      .then(playlists => this.setState({
+        playlists: playlists.map(item => {
           return {
             name: item.name,
             imageUrl: item.images[0].url,
-            songs: []
+            songs: item.trackDatas.slice(0, 3)
           }
         })
       })
@@ -132,31 +156,32 @@ class App extends Component {
         : []
     return (
       <div className="App" >
-        {this.state.user ?
-          <div>
-            <h1 className="title">
-              {this.state.user.name}'s Playlists
+        {
+          this.state.user ?
+            <div>
+              <h1 className="title">
+                {this.state.user.name}'s Playlists
               </h1>
-            <PlaylistCounter playlists={playlistToRender} />
+              <PlaylistCounter playlists={playlistToRender} />
 
-            <HoursCounter playlists={playlistToRender} />
+              <HoursCounter playlists={playlistToRender} />
 
-            <Filter onTextChange={text => this.setState({ filterString: text })} />
+              <Filter onTextChange={text => this.setState({ filterString: text })} />
 
-            {
-              playlistToRender
-                .map(playlist =>
-                  <Playlist playlist={playlist} />
-                )
-            }
+              {
+                playlistToRender
+                  .map(playlist =>
+                    <Playlist playlist={playlist} />
+                  )
+              }
 
-          </div> : <div className='btn' style={{ 'margin': '25% 0' }}
-            onClick={() => {
-              window.location = window.location.includes('localhost')
-                ? 'https://localhost:8888/login'
-                : 'https://playlistme.herokuapp.com/login'
+            </div> : <div className='btn' style={{ 'margin': '25% 0' }}
+              onClick={() => {
+                window.location = window.location.href.includes('localhost')
+                  ? 'http://localhost:8888/login'
+                  : 'https://playlistme-backend.herokuapp.com/login'
 
-            }}>Sign in with Spotify</div>
+              }}>Sign in with Spotify</div>
 
         }
       </div>
