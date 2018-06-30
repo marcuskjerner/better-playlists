@@ -7,22 +7,6 @@ let defaultStyle = {
   color: '#fafafa'
 }
 
-// let fakeServerData = {
-//   user: {
-//     name: 'Marcus',
-//     playlists: [
-//       {
-//         name: 'My Favorites',
-//         songs: [
-//           { name: 'Beat It', duration: 346 },
-//           { name: 'Cammeloni Makaroni', duration: 221 },
-//           { name: 'Rosa Helikopter', duration: 303 }
-//         ]
-//       }
-//     ]
-//   }
-// }
-
 // PlaylistCounter Component
 class PlaylistCounter extends Component {
   render() {
@@ -169,11 +153,10 @@ class App extends Component {
           </div> : <div className='btn' style={{ 'margin': '25% 0' }}
             onClick={() => {
               window.location = window.location.includes('localhost')
-                ? ('https://localhost:8888/login')
-                : ('https://playlistme.herokuapp.com/login')
+                ? 'https://localhost:8888/login'
+                : 'https://playlistme.herokuapp.com/login'
 
-            }
-            }>Sign in with Spotify</div>
+            }}>Sign in with Spotify</div>
 
         }
       </div>
